@@ -10,15 +10,14 @@
 #       'Accept-Language': 'en-US,en;q=0.8',
 #       'Connection': 'keep-alive'}
 
-URL = 'https://proxyscrape.com/web-proxy'
-# https://www.israelhayom.com/tag/settlements/page/1/
+URL = 'https://www.israelhayom.com/tag/settlements/'
 chromedriver_path = r'./chromedriver'
 scrolls = 50
 
-# response = requests.get(URL, headers=hdr)
-# page = BeautifulSoup('html.parser', response.text)
+# data = requests.get(URL)
+# page = BeautifulSoup('html.parser', data.text)
 
-# print(response.content)
+# print(page.text)
 
 import os
 import selenium
@@ -26,6 +25,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+import undetected_chromedriver as uc
 
 import time
 
@@ -38,7 +38,9 @@ options = webdriver.ChromeOptions();
 options.add_experimental_option("excludeSwitches", ["enable-automation"]) 
 options.add_experimental_option('useAutomationExtension', False)
 
-browser = webdriver.Chrome(executable_path=chromedriver_path,options=options)
+print("a")
+browser = uc.Chrome()
+print("b")
 browser.get(URL)
 time.sleep(8)
 
