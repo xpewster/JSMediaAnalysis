@@ -37,8 +37,11 @@ while s < scrolls:
     # Wait to load page
     time.sleep(2)
     # Load more
-    showmore_button = browser.find_element_by_xpath('/html/body/div[1]/div[4]/main/section[3]/div[2]/div/button')
-    showmore_button.click()
+    showmore_button = browser.find_elements_by_xpath('/html/body/div[1]/div[4]/main/section[3]/div[2]/div/button')
+    if (len(showmore_button) > 0):
+        showmore_button[0].click()
+    else:
+        break
     # print("show more")
     time.sleep(2)
     
