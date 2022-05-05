@@ -1,68 +1,65 @@
-import requests
-from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
-headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-ua=UserAgent()
-hdr = {'User-Agent': ua.random,
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-      'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-      'Accept-Encoding': 'none',
-      'Accept-Language': 'en-US,en;q=0.8',
-      'Connection': 'keep-alive'}
+# import requests
+# from bs4 import BeautifulSoup
+# from fake_useragent import UserAgent
+# headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+# ua=UserAgent()
+# hdr = {'User-Agent': ua.random,
+#       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+#       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+#       'Accept-Encoding': 'none',
+#       'Accept-Language': 'en-US,en;q=0.8',
+#       'Connection': 'keep-alive'}
 
-URL = 'https://www.israelhayom.com/tag/settlements/'
+URL = 'https://proxyscrape.com/web-proxy'
+# https://www.israelhayom.com/tag/settlements/page/1/
 chromedriver_path = r'./chromedriver'
 scrolls = 50
 
-data = requests.get(URL)
-page = BeautifulSoup('html.parser', data.text)
+# response = requests.get(URL, headers=hdr)
+# page = BeautifulSoup('html.parser', response.text)
 
-print(page.text)
+# print(response.content)
 
-# # page = requests.get(URL)
+import os
+import selenium
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 
-# # print(page.text)
+import time
 
-# import os
-# import selenium
-# from selenium import webdriver
-# from selenium.webdriver.chrome.service import Service
-# from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.common.by import By
+if (not os.path.exists(chromedriver_path)):
+    print("chromedriver not found")
 
-# import time
+s = Service(chromedriver_path)
 
-# if (not os.path.exists(chromedriver_path)):
-#     print("chromedriver not found")
+options = webdriver.ChromeOptions();
+options.add_experimental_option("excludeSwitches", ["enable-automation"]) 
+options.add_experimental_option('useAutomationExtension', False)
 
-# s = Service(chromedriver_path)
+browser = webdriver.Chrome(executable_path=chromedriver_path,options=options)
+browser.get(URL)
+time.sleep(8)
 
-# options = webdriver.ChromeOptions();
-# options.add_experimental_option("excludeSwitches", ["enable-automation"]) 
-# options.add_experimental_option('useAutomationExtension', False)
+urls = []
 
-# browser = webdriver.Chrome(executable_path=chromedriver_path,options=options)
-# browser.get(URL)
-# time.sleep(8)
+s = 0
+while s < scrolls:
+    links = browser.find_elements_by_css_selector("h3[class='jeg_post_title']")
+    batch_urls = map(lambda x: x.find_element("a").get_attribute('href'), links)
+    urls.append(batch_urls)
 
-# urls = []
+    # next batch
+    showmore_button = browser.find_element_by_xpath('/html/body/div[2]/div[4]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/div/div[2]/a[3]')
+    showmore_button.click()
+    time.sleep(2)
 
-# s = 0
-# while s < scrolls:
-#     links = browser.find_elements_by_css_selector("h3[class='jeg_post_title']")
-#     batch_urls = map(lambda x: x.find_element("a").get_attribute('href'), links)
-#     urls.append(batch_urls)
+    s = s+1
 
-#     # next batch
-#     showmore_button = browser.find_element_by_xpath('/html/body/div[2]/div[4]/div/div[1]/div/div/div[2]/div[1]/div/div[2]/div/div[2]/a[3]')
-#     showmore_button.click()
-#     time.sleep(2)
+links = browser.find_elements_by_css_selector("a[aria-label*='Go to the article']")
+urls = map(lambda x: x.get_attribute('href'), links)
 
-#     s = s+1
-
-# links = browser.find_elements_by_css_selector("a[aria-label*='Go to the article']")
-# urls = map(lambda x: x.get_attribute('href'), links)
-
-# for u in urls:
-#     print(u)
-# # print(browser.page_source)
+for u in urls:
+    print(u)
+# print(browser.page_source)
