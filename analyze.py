@@ -2,7 +2,13 @@ from bs4 import BeautifulSoup
 import requests
 import time
 import cloudscraper
+import spacy
 from fake_useragent import UserAgent
+
+import nltk
+from nltk.corpus import sentiwordnet as swn
+# nltk.download('punkt')
+# from PassivePySrc import PassivePy
 
 
 MAX_ITER = 50 # for testing
@@ -96,5 +102,52 @@ for p in pages:
 
 # ANALYSIS
 
+print ("start")
+nlp = spacy.load('en_core_web_sm')
+# passivepy = PassivePy.PassivePyAnalyzer('en_core_web_sm')
+print ("load")
+
+palestinianWB = ['palestinian', 'palestinians', 'palestine', 'arab', 'arabs', 'west bank', 'gaza']
+israeliWB = ['israeli', 'israelis', 'israel', 'jew', 'jews', 'settler', 'settlers', 'settlement', 'settlements']
 
 
+hayom_palestinian_passive = []
+hayom_israeli_passive = []
+hayom_palestinian_active = []
+hayom_israeli_active = []
+
+for page in hayom_text:
+    sentences = nltk.sent_tokenize(page)
+
+    for sent in sentences:
+        sentDoc = nlp(sent)
+        tags = [token.dep_ for token in sentDoc]
+
+        if (any(['agent' in sublist for sublist in tags]) or any(['nsubjpass' in sublist for sublist in tags])):
+            
+            for token in sentDoc:
+                if ((token.dep_ == "nsubjpass" or token.dep_ == "csubjpass")):
+                    if (token.text.lower() in palestinianWB):
+                        hayom_palestinian_passive.append(sent)
+                    elif (token.text.lower() in israeliWB):
+                        hayom_israeli_passive.append(sent)
+        else:
+            for token in sentDoc:
+                if ((token.dep_ == "nsubj" or token.dep_ == "csubj")):
+                    if (token.text.lower() in palestinianWB):
+                        hayom_palestinian_active.append(sent)
+                    elif (token.text.lower() in israeliWB):
+                        hayom_israeli_active.append(sent)
+
+print("-----------palestinian passive:")
+for s in hayom_palestinian_passive:
+    print(s)
+print("-----------israeli passive:")
+for s in hayom_israeli_passive:
+    print(s)
+print("-----------palestinian active:")
+for s in hayom_palestinian_active:
+    print(s)
+print("-----------israeli active:")
+for s in hayom_israeli_active:
+    print(s)
