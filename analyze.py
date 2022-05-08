@@ -42,6 +42,9 @@ for u in urls:
     if (i >= MAX_ITER or not test):
         break
     if (i % 50 == 0):
+        if (i > 0 and len(jpost_text) <= 1):
+            print("none jpost")
+            quit()
         print(str(i)+" cpmpleted (jpost)")
     i = i+1
     page = session.get(u,headers=hdr)
@@ -53,9 +56,6 @@ for u in urls:
 
     time.sleep(2)
 
-if (len(jpost_text) <= 1):
-    print("none jpost")
-    quit()
 
 # ------- Haaretz ------- #
 
