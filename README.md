@@ -2,7 +2,6 @@
 Analyzing bias in Israel media sources with regard to Israeli settlements for my Jewish Studies final project
 
 Results:
-
 Israel Hayom article count: 62
 Israel Hayom sentence count: 263
 Israel Hayom passive percentage (palestinian): 0.1935483870967742
